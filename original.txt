@@ -1,0 +1,47 @@
+Secure File Transfer - Alice and Bob Demonstration
+
+This file is used as part of a cryptography project that simulates a
+secure communication scenario between two parties, traditionally called
+"Alice" (the sender) and "Bob" (the receiver).
+
+The goal of this demonstration is to show how real secure systems protect
+data during transmission, even when the network itself cannot be trusted.
+
+In this simulation, the following security mechanisms are applied:
+
+1) Identity authentication using digital signatures
+   - Alice signs her handshake message so Bob can verify that the sender
+     is truly Alice.
+   - Bob signs his handshake response so Alice can verify Bob.
+
+2) Key agreement using Elliptic Curve Diffie-Hellman (ECDH)
+   - Alice and Bob each generate an ephemeral (temporary) key pair.
+   - They exchange only their public keys.
+   - From these public keys and their own private keys, each side computes
+     the same shared secret, without ever sending this secret through the network.
+
+3) Key derivation
+   - The shared ECDH value is not used directly as a symmetric key.
+   - Instead, both parties run it through a key derivation function (KDF),
+     which produces a 128-bit master key suitable for symmetric encryption.
+
+4) Encryption using ARIA in CBC mode
+   - Alice generates a random IV and encrypts this file using ARIA-128-CBC.
+   - The IV and ciphertext are included together in an encrypted package.
+
+5) Integrity protection
+   - Alice signs the payload (IV + ciphertext), so Bob can verify that
+     nothing was tampered with in transit.
+
+6) Secure decryption by Bob
+   - Bob verifies the payload signature.
+   - If it is valid, he decrypts the ciphertext using the same derived key
+     and recovers the original file content.
+
+If you are reading this message in plain text as part of the decrypted file,
+it means the protocol worked correctly and Bob successfully reconstructed the
+original message.
+
+If you are somehow reading this file without going through the protocol,
+then either the experiment failed — or you have broken modern cryptography,
+which would be very impressive (but unlikely).
